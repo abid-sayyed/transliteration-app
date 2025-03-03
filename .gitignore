@@ -1,0 +1,17 @@
+# General
+.DS_Store
+node_modules/
+.env
+dist/
+build/
+Thumbs.db
+desktop.ini
+
+# Python
+env/
+venv/
+__pycache__/
+*.pyc
+
+# Logs
+*.log
