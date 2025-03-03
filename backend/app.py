@@ -3,15 +3,20 @@ from flask_cors import CORS
 import pandas as pd
 from dotenv import load_dotenv
 
-from services.geminiApi import process_data_with_gemini
+from indic_transliteration import sanscript
+from indic_transliteration.sanscript import transliterate
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/")
 def hello_world():
+    data = 'इदम् अद्भुतम्'
+    result = transliterate(data, sanscript.DEVANAGARI, sanscript.ITRANS)
+    print(result)
     return "<p>server is running</p>"
 
 
@@ -28,20 +33,8 @@ def process_csv():
     if column_name not in df.columns:
         return jsonify({'error': 'Invalid column name'}), 400
 
-    wordList = df[column_name].tolist()
-    print("wordListluffy", wordList)
-
-    response_text = process_data_with_gemini(wordList)
-    print("response_text", response_text)
-
-    transliterated_names = response_text.strip("[]").replace("'", "").split(", ")
-    transliterated_names = [name.strip() for name in transliterated_names]
-
-    print("transliterated_names", transliterated_names)
-
-    if len(transliterated_names) != len(df):
-        return jsonify({'error': 'Mismatch between number of names and DataFrame rows'}), 400
-
+    transliterated_names = df[column_name].apply(
+        lambda x: transliterate(x, sanscript.DEVANAGARI, sanscript.ITRANS))
     df["Names_Pronounced"] = transliterated_names
 
     output_csv_path = 'static/processed_data.csv'
@@ -53,6 +46,7 @@ def process_csv():
 @app.route('/download', methods=['GET'])
 def download_csv():
     return app.send_static_file('processed_data.csv')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
