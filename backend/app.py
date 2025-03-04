@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
@@ -20,6 +21,11 @@ def hello_world():
 # ------------------------------
 @app.route('/upload', methods=['POST'])
 def process_csv():
+    output_csv_path = 'static/processed_data.csv'
+
+    if os.path.exists(output_csv_path):
+        os.remove(output_csv_path)
+
     file = request.files['file']
     if not file:
         return jsonify({'error': 'No file provided'}), 400
@@ -36,7 +42,6 @@ def process_csv():
         lambda x: transliterate(x, sanscript.DEVANAGARI, sanscript.ITRANS).title())
     df["Names_Pronounced"] = transliterated_names
 
-    output_csv_path = 'static/processed_data.csv'
     df.to_csv(output_csv_path, index=False)
 
     return jsonify({'message': 'File processed successfully', 'download_url': '/download'})
