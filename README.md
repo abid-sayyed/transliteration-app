@@ -1,7 +1,7 @@
 
 # Transliteration Web App
 
-This is a web application for transliterating Hindi words into their English counterparts. The app is built with a Flask backend and a React frontend, with TypeScript for type safety and Tailwind CSS for rapid styling. The backend is Dockerized and hosted on AWS EC2, while the frontend is hosted on Vercel. SSL is configured using Let's Encrypt with Cloudflare handling DNS.
+This web application allows users to transliterate Hindi words into their English counterparts. Users can upload a CSV file containing a column of names in Hindi. After uploading, the application will prompt the user to select the column containing the Hindi names. Once the column is selected, the file is sent to the backend, where the Flask server processes it, identifies the column, and converts the Hindi names using the indic_transliteration library. After the transliteration is complete, a download URL is provided, which can be used to download the processed file.
 
 
 ## Frontend
@@ -17,6 +17,7 @@ The backend is a Flask app, which handles the transliteration logic.
 - The backend is Dockerized for easier deployment and portability.
 - It is hosted on AWS EC2 with SSL enabled using Let's Encrypt.
 - The backend uses the indic_transliteration library for transliterating Hindi to English.
+
 ## Running Locally
 
 Clone the project:
